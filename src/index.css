@@ -11,6 +11,7 @@ body , html {
   padding: 0;
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif !important;
+  color: #363636 !important;
 }
 /* colors and backgrounds */
 
@@ -139,4 +140,14 @@ input:focus {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+
+/* antd override */
+.ant-form-item {
+  margin-bottom: 8px !important;
 }
