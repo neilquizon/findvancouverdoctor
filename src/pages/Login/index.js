@@ -1,11 +1,30 @@
-import { Button, Form } from "antd";
+import { Button, Form, message } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginUser } from "../../apicalls/users";
 
 function Login() {
+    const navigate = useNavigate();
 
-    const onFinish = (values) => {
-        console.log(values);
+    const onFinish = async (values) => {
+        try {
+            const response = await LoginUser(values);
+            if (response.success) {
+                message.success(response.message);
+                localStorage.setItem("user", JSON.stringify({
+                    ...response.data,
+                    password: ''
+                })
+                );
+                navigate("/");
+
+            } else {
+                throw new Error(response.message);
+            }
+
+        } catch (error) {
+            message.error(error.message);
+        }
     }
 
     return (
