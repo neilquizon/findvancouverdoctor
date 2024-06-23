@@ -21,7 +21,11 @@ h1,h2,h3,h4,h5,h6, a, span, p {
 
 .bg-white {
   background-color: #fff;
+  border-radius: 2px !important;
+  border: 1px solid #d3d2d2;
 }
+
+
 
 
 
