@@ -20,19 +20,28 @@ function ProtectedRoute({ children }) {
     return (
         <div className="layout p-1">
             <div className="header bg-white p-2 flex justify-between items-center">
-                <h2>
-                    <strong>FINDING VANCOUVER DOCTOR</strong>
+                <h2 className="cursor-pointer"
+                onClick={() => navigate("/")}
+                >
+                    <strong className="text-primary">FINDING VANCOUVER </strong>
+                    <strong className="text-secondary">DOCTOR</strong>
                 </h2>
                 {user && (
                 <div className="flex gap-3 items-center">
                     <div className="flex gap-1 items-center">
                     <i className="ri-shield-user-line"></i>
-                    <h4 className="uppercase cursor-pointer underline">
+                    <h4 className="uppercase cursor-pointer underline"
+                        onClick={() => navigate("/profile")}>
                         {user.name}
                         </h4>
                         </div>
 
-                    <i className="ri-logout-box-r-line"></i>
+                    <i className="ri-logout-box-r-line"
+                    onClick={() => {
+                        localStorage.removeItem("user");
+                        navigate("/login");
+                    }}
+                    ></i>
                 </div>
     )}
             </div>

@@ -25,7 +25,13 @@ h1,h2,h3,h4,h5,h6, a, span, p {
   border: 1px solid #d3d2d2;
 }
 
+.text-primary {
+  color: #0b620b;
+}
 
+.text-secondary {
+  color: #583005;
+}
 
 
 
