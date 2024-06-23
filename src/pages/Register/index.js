@@ -2,13 +2,18 @@ import { Button, Form, message } from "antd";
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CreateUser } from "../../apicalls/users";
+import { useDispatch } from "react-redux";
+import { ShowLoader } from "../../redux/loaderSlice";
 
 function Register() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const onFinish = async (values) => {
         try {
+            dispatch(ShowLoader(true));
             const response = await CreateUser(values);
+            dispatch(ShowLoader(false));
             if (response.success) {
                 message.success(response.message);
                 navigate("/login");
@@ -16,6 +21,7 @@ function Register() {
                 throw new Error(response.message);
             }
         } catch (error) {
+            dispatch(ShowLoader(false));
             message.error(error.message);
         }
     };

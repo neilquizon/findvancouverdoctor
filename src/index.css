@@ -33,6 +33,13 @@ h1,h2,h3,h4,h5,h6, a, span, p {
   color: #583005;
 }
 
+.bg-primary {
+  background-color: #205e61;
+}
+
+.bg-secondary {
+  background-color: #d61355;
+}
 
 
 /* flex classes */
@@ -182,4 +189,16 @@ input:focus {
 /* antd override */
 .ant-form-item {
   margin-bottom: 8px !important;
+}
+
+/* spinner */
+
+.spinner-parent {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000b5;
+  z-index: 999;
 }
