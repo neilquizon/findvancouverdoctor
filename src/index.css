@@ -38,6 +38,21 @@ h1,h2,h3,h4,h5,h6, a, span, p {
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 10px;
+}
+.gap-2 {
+  gap: 20px;
+}
+.gap-3 {
+  gap: 30px;
+}
+
+
 .items-center {
   align-items: center;
 }
@@ -150,6 +165,9 @@ input:focus {
   text-decoration: underline;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
 
 /* antd override */
 .ant-form-item {

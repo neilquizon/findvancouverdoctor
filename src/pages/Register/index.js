@@ -1,15 +1,17 @@
 import { Button, Form, message } from "antd";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { CreateUser } from "../../apicalls/users";
 
 function Register() {
+    const navigate = useNavigate();
 
     const onFinish = async (values) => {
         try {
             const response = await CreateUser(values);
             if (response.success) {
                 message.success(response.message);
+                navigate("/login");
             } else {
                 throw new Error(response.message);
             }
@@ -17,6 +19,12 @@ function Register() {
             message.error(error.message);
         }
     };
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) navigate("/");
+        // navigate(user ? "/" : "/login");
+    }, []);
 
     return (
         <div className="flex justify-center items-center h-screen">

@@ -1,5 +1,5 @@
 import { Button, Form, message } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginUser } from "../../apicalls/users";
 
@@ -26,6 +26,12 @@ function Login() {
             message.error(error.message);
         }
     }
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) navigate("/");
+        // navigate(user ? "/" : "/login");
+    }, []);
 
     return (
         <div className="flex justify-center items-center h-screen">
