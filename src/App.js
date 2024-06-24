@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import { useSelector } from "react-redux";
+import DoctorForm from "./pages/DoctorForm";
 
 function App() {
   const {loading} = useSelector(state => state.loader);
@@ -18,6 +19,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path='/apply-doctor' element={<ProtectedRoute><DoctorForm /></ProtectedRoute>} />
 
         </Routes>
       </BrowserRouter>
