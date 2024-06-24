@@ -144,7 +144,7 @@ h1,h2,h3,h4,h5,h6, a, span, p {
 }
 
 /* form-elements */
-input {
+input , textarea , select {
   height: 45px !important;
   
   border: 1px solid;
@@ -152,9 +152,14 @@ input {
   width: 100%;
 }
 
-input:focus {
+input:focus , textarea , select {
   outline: none;
   border: 1px solid #494949;
+}
+
+textarea {
+  min-height: 100px;
+  padding-top: 20px;
 }
 
 .contained-btn{
