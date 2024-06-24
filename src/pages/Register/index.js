@@ -53,7 +53,7 @@ function Register() {
                     <input type="password" />
                 </Form.Item>
 
-                <button className="contained-btn my-1" type="submit">REGISTER</button>
+                <button className="contained-btn my-1 w-full" type="submit">REGISTER</button>
                 <Link className="underline" to='/login'>Already have an account? <strong>Sign in</strong></Link>
 
 
