@@ -1,18 +1,67 @@
-import React from "react";
-import { Col, Form, Row } from "antd";
+import React, { useEffect } from "react";
+import { Col, Form, Row, message } from "antd";
 import Item from "antd/es/list/Item";
+import { useDispatch } from "react-redux";
+import { AddDoctor, CheckIfDoctorAccountIsApplied, GetDoctorById } from "../../apicalls/doctors";
+import { ShowLoader } from "../../redux/loaderSlice";
+import { useNavigate } from "react-router-dom";
 
 function DoctorForm() {
     const [days , setDays] = React.useState([]);
+    const [alreadyApplied , setAlreadyApplied] = React.useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const onFinish = (values) => {
-        values.days = days;
-        console.log("success:", values);
-    }
+    const onFinish = async(values) => {
+        try {
+            dispatch(ShowLoader(true));
+            const payload = {
+                ...values,
+                days,
+                userId : JSON.parse(localStorage.getItem("user")).id,
+                status : "pending"
+            };
+            const response = await AddDoctor(payload);
+            if (response.success) {
+                message.success(response.message);
+                navigate("/profile")
+
+
+            } else {
+                message.error(response.message);
+            }
+            dispatch(ShowLoader(false));
+
+        } catch (error) {
+            dispatch(ShowLoader(false));
+            message.error(error.message);
+            
+        }
+    };
+
+    const checkIfAlreadyApplied = async () => {
+        try {
+          dispatch(ShowLoader(true));
+          const response = await CheckIfDoctorAccountIsApplied(JSON.parse(localStorage.getItem("user")).id);
+          if(response.success) {
+            setAlreadyApplied(true);
+          }
+          dispatch(ShowLoader(false));
+        } catch (error) {
+          dispatch(ShowLoader(false));
+          message.error(error.message);
+        }
+      };
+      
+
+
+    useEffect(() => {
+        checkIfAlreadyApplied();
+    }, []);
     return (
         <div className="bg-white p-2">
 
-            <h3 className="uppercase my-1" >Register as a doctor</h3>
+            {!alreadyApplied && <><h3 className="uppercase my-1" >Register as a doctor</h3>
             <hr />
 
             <Form layout="vertical" className="my-1"
@@ -311,7 +360,17 @@ function DoctorForm() {
 
                 </div>
 
-            </Form>
+            </Form></>}
+            {alreadyApplied && 
+            <div className="flex flex-col items-center gap-2">
+                <h3 className="text-secondary">You have already applied for this account, please wait for admin to approve your request</h3>
+                </div>
+            }
+            
+            
+
+            
+            
 
         </div>
     )
