@@ -1,9 +1,75 @@
-import React from "react";
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { ShowLoader } from '../../redux/loaderSlice'
+import { Table, message } from 'antd'
 
-function Userslist() {
+import { getAllUsers } from '../../apicalls/users'
+
+
+function UsersList() {
+    const [users, setUsers] = React.useState([])
+
+    const dispatch = useDispatch()
+    const getData = async () => {
+        try {
+
+            dispatch(ShowLoader(true))
+            const response = await getAllUsers()
+            dispatch(ShowLoader(false))
+            if (response.success) {
+                setUsers(response.data)
+            } else {
+                throw new Error(response.message)
+            }
+
+        } catch (error) {
+            dispatch(ShowLoader(false))
+            message.error(error.message)
+
+        }
+
+        try {
+
+        } catch (error) {
+
+        }
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+        },
+        {
+            title: "Name",
+            dataIndex: "name",
+        },
+
+
+        {
+            title: "Email",
+            dataIndex: "email",
+        },
+
+        {
+            title: "Role",
+            dataIndex: "role",
+        },
+
+        {
+            title: "Status",
+            dataIndex: "status",
+        },
+
+    ]
     return (
-        <div>Userslist</div>
-    )
+        <div><Table columns={columns} dataSource={users} /></div>
+    );
 }
 
-export default Userslist
+export default UsersList;

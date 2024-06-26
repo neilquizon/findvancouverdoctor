@@ -47,3 +47,24 @@ export const CheckIfDoctorAccountIsApplied = async (id) => {
 
     }
 };
+
+export const GetAllDoctors = async () => {
+    try {
+      const doctors = await getDocs(collection(firestoreDatabase, "doctors"));
+      return {
+        success: true,
+        data: doctors.docs.map((doc) => {
+            return {
+                ...doc.data(),
+                id: doc.id,
+            };
+        }),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  };
+  

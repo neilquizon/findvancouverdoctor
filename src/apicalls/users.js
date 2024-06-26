@@ -1,6 +1,6 @@
 import { message } from "antd";
 import firestoreDatabase from "../firebaseConfig";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, doc } from "firebase/firestore";
 import CryptoJS from "crypto-js";
 
 
@@ -66,11 +66,33 @@ export const LoginUser = async (payload) => {
         return {
             success: true,
             message: "User logged in seccessfully",
-            data : user
+            data: user
         };
 
     } catch (error) {
         return error;
-    }
+    };
 
+    
 };
+
+export const getAllUsers = async () => {
+
+    try {
+        const users = await getDocs(collection(firestoreDatabase, "Users"));
+        return {
+            success: true,
+            data: users.docs.map((doc) => {
+                return {
+                    ...doc.data(),
+                    id: doc.id,
+                };
+            }
+
+            ),
+        };
+    } catch (error) {
+        return error;
+    }
+}
+
