@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { ShowLoader } from '../../redux/loaderSlice'
 import { Table, message } from 'antd'
 
-import { getAllUsers } from '../../apicalls/users'
+import { GetAllUsers } from '../../apicalls/users'
 
 
 function UsersList() {
@@ -14,7 +14,7 @@ function UsersList() {
         try {
 
             dispatch(ShowLoader(true))
-            const response = await getAllUsers()
+            const response = await GetAllUsers()
             dispatch(ShowLoader(false))
             if (response.success) {
                 setUsers(response.data)

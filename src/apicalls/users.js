@@ -76,7 +76,7 @@ export const LoginUser = async (payload) => {
     
 };
 
-export const getAllUsers = async () => {
+export const GetAllUsers = async () => {
 
     try {
         const users = await getDocs(collection(firestoreDatabase, "Users"));
