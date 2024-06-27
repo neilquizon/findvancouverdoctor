@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Spinner from "./components/Spinner";
 import Admin from "./pages/Admin";
+import BookAppointment from "./pages/BookAppointment";
 
 import DoctorForm from "./pages/DoctorForm";
 import Home from "./pages/Home";
@@ -24,6 +25,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/book-appointment/:id"
+            element={
+              <ProtectedRoute>
+                <BookAppointment />
               </ProtectedRoute>
             }
           />
