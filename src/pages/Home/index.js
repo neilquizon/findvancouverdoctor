@@ -5,16 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { GetAllDoctors } from "../../apicalls/doctors";
 import { ShowLoader } from "../../redux/loaderSlice";
 
-
 // Footer component
 const Footer = () => (
-    <footer style={{ backgroundColor: '#004182', color: 'white', padding: '1rem', fontFamily: 'Roboto, sans-serif', textAlign: 'center' }}>
-        <p style={{ color: 'white' }}>&copy; 2024 Finding Vancouver Doctor. All rights reserved.</p>
-    </footer>
+  <footer style={{ backgroundColor: '#004182', color: 'white', padding: '1rem', fontFamily: 'Roboto, sans-serif', textAlign: 'center' }}>
+    <p style={{ color: 'white' }}>&copy; 2024 Finding Vancouver Doctor. All rights reserved.</p>
+  </footer>
 );
 
 function Home() {
-  const [doctors = [], setDoctors] = React.useState([]);
+  const [doctors, setDoctors] = React.useState([]);
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -41,57 +40,62 @@ function Home() {
 
   return (
     user && (
-      <div className="flex flex-col justify-between h-screen">
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '100vh' }}>
         
-        <div className="flex-grow">
-          <div className="flex justify-between">
+        <div style={{ flexGrow: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
             <div>
-              <input placeholder="Search doctors" className="w-400" />
+              <input placeholder="Search doctors" style={{ width: '100%', maxWidth: '400px' }} />
             </div>
             {user?.role !== "doctor" && (
               <button
-                className="outlined-btn"
+                style={{ border: '1px solid #004182', padding: '0.5rem 1rem', backgroundColor: 'transparent', cursor: 'pointer' }}
                 onClick={() => navigate("/apply-doctor")}
               >
                 Register as a Doctor
               </button>
             )}
           </div>
-          <Row gutter={[16, 16]} className="my-1">
+          <Row gutter={[16, 16]} style={{ margin: '1rem 0' }}>
             {doctors.map((doctor) => (
-              <Col span={8} key={doctor.id}>
+              <Col xs={24} sm={12} md={8} key={doctor.id}>
                 <div
-                  className="bg-white p-1 flex flex-col gap-1 cursor-pointer"
+                  style={{ backgroundColor: 'white', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', cursor: 'pointer' }}
                   onClick={() => navigate(`/book-appointment/${doctor.id}`)}
                 >
-                  <div className="flex justify-between w-full">
-                    <h2 className="uppercase">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <h2 style={{ textTransform: 'uppercase' }}>
                       {doctor.firstName} {doctor.lastName}
                     </h2>
                   </div>
                   <hr />
-                  <div className="flex justify-between w-full">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <h4>
+                      <b>Clinic : </b>
+                    </h4>
+                    <h4>{doctor.address}</h4>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <h4>
                       <b>Speciality : </b>
                     </h4>
                     <h4>{doctor.speciality}</h4>
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <h4>
                       <b>Experience : </b>
                     </h4>
                     <h4>
-                      {doctor.experience}
-                      Years
+                      {doctor.experience} Years
                     </h4>
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <h4>
                       <b>Email : </b>
                     </h4>
                     <h4>{doctor.email}</h4>
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <h4>
                       <b>Phone : </b>
                     </h4>
