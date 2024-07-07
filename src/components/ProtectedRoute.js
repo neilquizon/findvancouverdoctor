@@ -27,27 +27,33 @@ function ProtectedRoute({ children }) {
                     <strong className="text-secondary">DOCTOR</strong>
                 </h2>
                 {user && (
-                <div className="flex gap-3 items-center">
-                    <div className="flex gap-1 items-center">
-                    <i className="ri-shield-user-line"></i>
-                    <h4 className="uppercase cursor-pointer underline"
-                        onClick={() => navigate("/profile")}>
-                        {user.name}
-                        </h4>
-                        </div>
-
-                    <i className="ri-logout-box-r-line"
-                    onClick={() => {
-                        localStorage.removeItem("user");
-                        navigate("/login");
-                    }}
-                    ></i>
-                </div>
-    )}
+          <div className="flex gap-3 items-center">
+            <div className="flex gap-1 items-center">
+              <i className="ri-shield-user-line"></i>
+              <h4
+                className="uppercase cursor-pointer underline"
+                onClick={() => {
+                  if (user.role === "admin") navigate("/admin");
+                  else navigate("/profile");
+                }}
+              >
+                {user.name}
+              </h4>
             </div>
-            <div className="content my-1">{children}</div>
-        </div>
-    );
+
+            <i
+              className="ri-logout-box-r-line"
+              onClick={() => {
+                localStorage.removeItem("user");
+                navigate("/login");
+              }}
+            ></i>
+          </div>
+        )}
+      </div>
+      <div className="content my-1">{children}</div>
+    </div>
+  );
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

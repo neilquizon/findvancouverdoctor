@@ -233,25 +233,7 @@ function DoctorForm() {
                 </Form.Item>
               </Col>
 
-              <Col span={8}>
-                <Form.Item
-                  label="Qualification"
-                  name="qualification"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Required",
-                    },
-                  ]}
-                >
-                  <select>
-                    <option value="MBBS">MBBS</option>
-                    <option value="MD">MD</option>
-                    <option value="MS">MS</option>
-                    <option value="MDS">MDS</option>
-                  </select>
-                </Form.Item>
-              </Col>
+              
 
               <Col span={24}>
                 <hr />

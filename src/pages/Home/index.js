@@ -41,7 +41,7 @@ function Home() {
             className="outlined-btn"
             onClick={() => navigate("/apply-doctor")}
           >
-            Apply doctor
+            Register as a Doctor
           </button>
         )}
       </div>

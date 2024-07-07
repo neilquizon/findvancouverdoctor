@@ -5,68 +5,74 @@ import { LoginUser } from "../../apicalls/users";
 import { useDispatch } from "react-redux";
 import { ShowLoader } from "../../redux/loaderSlice";
 
+const Header = () => (
+    <header style={{ backgroundColor: '#0073b1', color: 'white', padding: '1rem', fontFamily: 'Roboto, sans-serif' }}>
+        <h1 style={{ color: 'white', textAlign: 'center', fontSize: '2rem' }}>Finding Vancouver Doctor</h1>
+    </header>
+);
+
+const Footer = () => (
+    <footer style={{ backgroundColor: '#004182', color: 'white', padding: '1rem', fontFamily: 'Roboto, sans-serif', textAlign: 'center' }}>
+        <p style={{ color: 'white' }}>&copy; 2024 Finding Vancouver Doctor. All rights reserved.</p>
+    </footer>
+);
+
 function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const onFinish = async (values) => {
         try {
-            dispatch(ShowLoader(true))
+            dispatch(ShowLoader(true));
             const response = await LoginUser(values);
-            dispatch(ShowLoader(false))
+            dispatch(ShowLoader(false));
             if (response.success) {
                 message.success(response.message);
                 localStorage.setItem("user", JSON.stringify({
                     ...response.data,
                     password: ''
-                })
-                );
+                }));
                 navigate("/");
-
             } else {
                 throw new Error(response.message);
             }
-
         } catch (error) {
-            dispatch(ShowLoader(false))
+            dispatch(ShowLoader(false));
             message.error(error.message);
         }
-    }
+    };
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user) navigate("/");
         // navigate(user ? "/" : "/login");
-    }, []);
+    }, [navigate]);
 
     return (
-        <div className="flex justify-center items-center h-screen">
-            <Form layout="vertical" className="w-400 bg-white p-2" onFinish={onFinish}>
-                <h2 className="uppercase my-1">
-                    <strong>Find a Vancouver Doctor</strong>
-
-                </h2>
-                <h2 className="uppercase my-1">
-                    <strong>Login</strong>
-                    <hr />
-                </h2>
-
-                <Form.Item label="Email" name="email">
-                    <input type="email" />
-                </Form.Item>
-                <Form.Item label="Password" name="password">
-                    <input type="password" />
-                </Form.Item>
-
-                <button className="contained-btn my-1 w-full" type="submit">Login</button>
-                <Link className="underline" to='/Register'>Don't have an account? <strong>Register</strong></Link>
-
-
-
-            </Form>
+        <div className="flex flex-col justify-between h-screen">
+            <Header />
+            <div className="flex justify-center items-center flex-grow">
+                <Form layout="vertical" className="w-400 bg-white p-2" onFinish={onFinish}>
+                    <h2 className="uppercase my-1">
+                        <strong></strong>
+                    </h2>
+                    <h2 className="uppercase my-1">
+                        <strong>Login</strong>
+                        <hr />
+                    </h2>
+                    <Form.Item label="Email" name="email">
+                        <input type="email" />
+                    </Form.Item>
+                    <Form.Item label="Password" name="password">
+                        <input type="password" />
+                    </Form.Item>
+                    <button className="contained-btn my-1 w-full" type="submit">Login</button>
+                    <Link className="underline" to='/Register'>Don't have an account? <strong>Register</strong></Link>
+                </Form>
+            </div>
+            <Footer />
         </div>
     );
-
 }
 
 export default Login;
