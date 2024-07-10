@@ -1,5 +1,5 @@
 import firestoreDatabase from "../firebaseConfig";
-import { collection, addDoc, getDocs, query, where, getDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, getDoc, doc, updateDoc } from "firebase/firestore";
 import CryptoJS from "crypto-js";
 
 export const CreateUser = async (payload) => {
@@ -94,3 +94,76 @@ export const GetUserById = async (id) => {
     return error;
   }
 }
+
+export const GetSecretQuestion = async (email) => {
+  try {
+    const qry = query(
+      collection(firestoreDatabase, "users"),
+      where("email", "==", email)
+    );
+    const userSnapshots = await getDocs(qry);
+    if (userSnapshots.size === 0) {
+      throw new Error("User does not exist");
+    }
+
+    const user = userSnapshots.docs[0].data();
+    return {
+      success: true,
+      secretQuestion: user.secretQuestion,
+    };
+  } catch (error) {
+    return error;
+  }
+};
+
+export const ValidateSecretAnswer = async (payload) => {
+  try {
+    const qry = query(
+      collection(firestoreDatabase, "users"),
+      where("email", "==", payload.email),
+      where("secretAnswer", "==", payload.secretAnswer)
+    );
+    const userSnapshots = await getDocs(qry);
+    if (userSnapshots.size === 0) {
+      throw new Error("Incorrect secret answer");
+    }
+
+    return {
+      success: true,
+      message: "Secret answer is correct",
+    };
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdatePassword = async (payload) => {
+  try {
+    const qry = query(
+      collection(firestoreDatabase, "users"),
+      where("email", "==", payload.email),
+      where("secretAnswer", "==", payload.secretAnswer)
+    );
+    const userSnapshots = await getDocs(qry);
+    if (userSnapshots.size === 0) {
+      throw new Error("User not found or incorrect secret answer");
+    }
+
+    const userDoc = userSnapshots.docs[0];
+    const userRef = doc(firestoreDatabase, "users", userDoc.id);
+
+    const hashedPassword = CryptoJS.AES.encrypt(
+      payload.newPassword,
+      "findvancouverdoctor"
+    ).toString();
+
+    await updateDoc(userRef, { password: hashedPassword });
+
+    return {
+      success: true,
+      message: "Password updated successfully",
+    };
+  } catch (error) {
+    return error;
+  }
+};

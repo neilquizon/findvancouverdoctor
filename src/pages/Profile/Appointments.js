@@ -1,28 +1,33 @@
-import { message, Table } from "antd";
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import {
-  GetDoctorAppointments,
-  GetUserAppointments,
-  UpdateAppointmentStatus,
-} from "../../apicalls/appointments";
-import { ShowLoader } from "../../redux/loaderSlice";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { ShowLoader } from '../../redux/loaderSlice';
+import { Table, message } from 'antd';
+import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus } from '../../apicalls/appointments';
+import './Appointments.css'; // Ensure you create this CSS file
 
 function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
   const dispatch = useDispatch();
+
   const getData = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user.role === "doctor") {
-      const response = await GetDoctorAppointments(user.id);
+    try {
+      dispatch(ShowLoader(true));
+      const user = JSON.parse(localStorage.getItem("user"));
+      let response;
+      if (user.role === "doctor") {
+        response = await GetDoctorAppointments(user.id);
+      } else {
+        response = await GetUserAppointments(user.id);
+      }
+      dispatch(ShowLoader(false));
       if (response.success) {
         setAppointments(response.data);
+      } else {
+        throw new Error(response.message);
       }
-    } else {
-      const response = await GetUserAppointments(user.id);
-      if (response.success) {
-        setAppointments(response.data);
-      }
+    } catch (error) {
+      dispatch(ShowLoader(false));
+      message.error(error.message);
     }
   };
 
@@ -30,76 +35,68 @@ function Appointments() {
     try {
       dispatch(ShowLoader(true));
       const response = await UpdateAppointmentStatus(id, status);
+      dispatch(ShowLoader(false));
       if (response.success) {
         message.success(response.message);
         getData();
       } else {
-        message.error(response.message);
+        throw new Error(response.message);
       }
-      dispatch(ShowLoader(false));
     } catch (error) {
-      message.error(error.message);
       dispatch(ShowLoader(false));
+      message.error(error.message);
     }
   };
-
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "date",
-    },
-    {
-      title: "Time",
-      dataIndex: "slot",
-    },
-    {
-      title: "Doctor",
-      dataIndex: "doctorName",
-    },
-    {
-      title: "Patient",
-      dataIndex: "userName",
-    },
-    {
-      title: "Booked At",
-      dataIndex: "bookedOn",
-    },
-    {
-      title: "Problem",
-      dataIndex: "problem",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      render: (text, record) => {
-        const user = JSON.parse(localStorage.getItem("user"));
-
-        if (record.status === "pending" && user.role === "doctor") {
-          return (
-            <div className="flex gap-1">
-              <span className="underline cursor-pointer"
-                onClick={() => onUpdate(record.id, "cancelled")}
-              >Cancel</span>
-              <span className="underline cursor-pointer"
-                onClick={() => onUpdate(record.id, "approved")}
-              >Approve</span>
-            </div>
-          );
-        }
-      },
-    },
-  ];
 
   useEffect(() => {
     getData();
   }, []);
+
+  const columns = [
+    { title: 'Date', dataIndex: 'date', key: 'date' },
+    { title: 'Time', dataIndex: 'slot', key: 'slot' },
+    { title: 'Doctor', dataIndex: 'doctorName', key: 'doctorName' },
+    { title: 'Patient', dataIndex: 'userName', key: 'userName' },
+    { title: 'Booked At', dataIndex: 'bookedOn', key: 'bookedOn' },
+    { title: 'Problem', dataIndex: 'problem', key: 'problem' },
+    { title: 'Status', dataIndex: 'status', key: 'status' },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+      render: (text, record) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (record.status === "pending" && user.role === "doctor") {
+          return (
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => onUpdate(record.id, "cancelled")}
+              >
+                Cancel
+              </span>
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => onUpdate(record.id, "approved")}
+              >
+                Approve
+              </span>
+            </div>
+          );
+        }
+      }
+    }
+  ];
+
   return (
-    <div>
-      <Table columns={columns} dataSource={appointments || []} />
+    <div className="table-container">
+      <Table
+        columns={columns}
+        dataSource={appointments}
+        pagination={false}
+        rowKey="id"
+        scroll={{ x: 600 }} // Enable horizontal scrolling on smaller screens
+      />
     </div>
   );
 }

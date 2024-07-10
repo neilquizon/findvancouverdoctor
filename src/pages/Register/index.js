@@ -66,6 +66,12 @@ function Register() {
                     <Form.Item label="Password" name="password">
                         <input type="password" />
                     </Form.Item>
+                    <Form.Item label="Secret Question" name="secretQuestion">
+                        <input type="text" placeholder="Enter your secret question" />
+                    </Form.Item>
+                    <Form.Item label="Secret Answer" name="secretAnswer">
+                        <input type="text" placeholder="Enter your secret answer" />
+                    </Form.Item>
 
                     <button className="contained-btn my-1 w-full" type="submit">
                         REGISTER
