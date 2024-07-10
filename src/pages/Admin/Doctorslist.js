@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { GetAllDoctors, UpdateDoctor } from "../../apicalls/doctors";
 import { ShowLoader } from "../../redux/loaderSlice";
+import './DoctorsList.css'; // Ensure you create this CSS file
 
 function DoctorsList() {
   const [doctors, setDoctors] = React.useState([]);
@@ -46,32 +47,15 @@ function DoctorsList() {
   }, []);
 
   const columns = [
-    {
-      title: "First Name",
-      dataIndex: "firstName",
-    },
-    {
-      title: "Last Name",
-      dataIndex: "lastName",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-    },
-    {
-      title: "Speciality",
-      dataIndex: "speciality",
-    },
+    { title: "First Name", dataIndex: "firstName" },
+    { title: "Last Name", dataIndex: "lastName" },
+    { title: "Email", dataIndex: "email" },
+    { title: "Phone", dataIndex: "phone" },
+    { title: "Speciality", dataIndex: "speciality" },
     {
       title: "Status",
       dataIndex: "status",
-      render : (text, record) => {
-        return text.toUpperCase()
-      }
+      render: (text, record) => text.toUpperCase()
     },
     {
       title: "Actions",
@@ -82,71 +66,50 @@ function DoctorsList() {
             <div className="flex gap-1">
               <span
                 className="underline cursor-pointer"
-                onClick={() =>
-                  changeStatus({
-                    ...record,
-                    status: "rejected",
-                  })
-                }
+                onClick={() => changeStatus({ ...record, status: "rejected" })}
               >
                 Reject
               </span>
               <span
                 className="underline cursor-pointer"
-                onClick={() =>
-                  changeStatus({
-                    ...record,
-                    status: "approved",
-                  })
-                }
+                onClick={() => changeStatus({ ...record, status: "approved" })}
               >
                 Approve
               </span>
             </div>
           );
         }
-
         if (record.status === "approved") {
           return (
             <div className="flex gap-1">
               <span
                 className="underline cursor-pointer"
-                onClick={() =>
-                  changeStatus({
-                    ...record,
-                    status: "blocked",
-                  })
-                }
+                onClick={() => changeStatus({ ...record, status: "blocked" })}
               >
                 Block
               </span>
             </div>
           );
         }
-
         if (record.status === "blocked") {
           return (
             <div className="flex gap-1">
               <span
                 className="underline cursor-pointer"
-                onClick={() =>
-                  changeStatus({
-                    ...record,
-                    status: "approved",
-                  })
-                }
+                onClick={() => changeStatus({ ...record, status: "approved" })}
               >
                 Unblock
               </span>
             </div>
           );
         }
-      },
-    },
+      }
+    }
   ];
+
   return (
-    <div>
-      <Table columns={columns} dataSource={doctors} />
+    <div className="table-container">
+      <Table columns={columns} dataSource={doctors} pagination={false} scroll={{ x: true }} />
     </div>
   );
 }
