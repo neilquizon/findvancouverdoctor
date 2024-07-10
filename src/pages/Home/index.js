@@ -1,5 +1,5 @@
 import { Col, message, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { GetAllDoctors } from "../../apicalls/doctors";
@@ -13,7 +13,8 @@ const Footer = () => (
 );
 
 function Home() {
-  const [doctors, setDoctors] = React.useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -38,6 +39,14 @@ function Home() {
     getData();
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredDoctors = doctors.filter((doctor) =>
+    `${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(searchQuery)
+  );
+
   return (
     user && (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '100vh' }}>
@@ -45,7 +54,12 @@ function Home() {
         <div style={{ flexGrow: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
             <div>
-              <input placeholder="Search doctors" style={{ width: '100%', maxWidth: '400px' }} />
+              <input
+                placeholder="Search doctors"
+                style={{ width: '100%', maxWidth: '400px' }}
+                value={searchQuery}
+                onChange={handleSearch}
+              />
             </div>
             {user?.role !== "doctor" && (
               <button
@@ -57,7 +71,7 @@ function Home() {
             )}
           </div>
           <Row gutter={[16, 16]} style={{ margin: '1rem 0' }}>
-            {doctors.map((doctor) => (
+            {filteredDoctors.map((doctor) => (
               <Col xs={24} sm={12} md={8} key={doctor.id}>
                 <div
                   style={{ backgroundColor: 'white', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', cursor: 'pointer' }}
