@@ -11,14 +11,14 @@ import {
 } from "../../apicalls/appointments";
 
 function BookAppointment() {
-  const [problem = "", setProblem] = React.useState("");
-  const [date = "", setDate] = React.useState("");
+  const [problem, setProblem] = React.useState("");
+  const [date, setDate] = React.useState("");
   const [doctor, setDoctor] = React.useState(null);
-  const [selectedSlot = "", setSelectedSlot] = React.useState("");
+  const [selectedSlot, setSelectedSlot] = React.useState("");
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const [bookedSlots = [], setBookedSlots] = React.useState([]);
+  const [bookedSlots, setBookedSlots] = React.useState([]);
 
   const getData = async () => {
     try {
@@ -50,35 +50,46 @@ function BookAppointment() {
     let slotDuration = 60; // in minutes
     const slots = [];
     while (startTime < endTime) {
-      // if(!bookedSlots?.find((slot) => slot.slot === startTime.format("HH:mm")))
-
       slots.push(startTime.format("HH:mm"));
       startTime.add(slotDuration, "minutes");
     }
-    return slots.map((slot) => {
-      const isBooked = bookedSlots?.find(
-        (bookedSlot) =>
-          bookedSlot.slot === slot && bookedSlot.status !== "cancelled"
-      );
-      return (
-        <div
-          className="bg-white p-1 cursor-pointer"
-          onClick={() => setSelectedSlot(slot)}
-          style={{
-            border:
-              selectedSlot === slot ? "3px solid green" : "1px solid gray",
-            backgroundColor: isBooked ? "gray" : "white",
-            pointerEvents: isBooked ? "none" : "auto",
-            cursor: isBooked ? "not-allowed" : "pointer",
-          }}
-        >
-          <span>
-            {moment(slot, "HH:mm").format("hh:mm A")} -{" "}
-            {moment(slot, "HH:mm").add(slotDuration, "minutes").format("hh:mm A")}
-          </span>
-        </div>
-      );
-    });
+    return (
+      <div style={{ overflowX: "auto" }}>
+        <table className="w-full">
+          <tbody>
+            <tr>
+              {slots.map((slot) => {
+                const isBooked = bookedSlots?.find(
+                  (bookedSlot) =>
+                    bookedSlot.slot === slot && bookedSlot.status !== "cancelled"
+                );
+                return (
+                  <td key={slot} className="p-2">
+                    <div
+                      className="bg-white p-2 cursor-pointer"
+                      onClick={() => !isBooked && setSelectedSlot(slot)}
+                      style={{
+                        border: selectedSlot === slot ? "3px solid green" : "1px solid gray",
+                        backgroundColor: isBooked ? "gray" : "white",
+                        pointerEvents: isBooked ? "none" : "auto",
+                        cursor: isBooked ? "not-allowed" : "pointer",
+                        minWidth: "120px",
+                        textAlign: "center"
+                      }}
+                    >
+                      <span style={{ fontSize: "14px" }}>
+                        {moment(slot, "HH:mm").format("hh:mm A")} -{" "}
+                        {moment(slot, "HH:mm").add(slotDuration, "minutes").format("hh:mm A")}
+                      </span>
+                    </div>
+                  </td>
+                );
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   const onBookAppointment = async () => {
@@ -115,7 +126,6 @@ function BookAppointment() {
       const response = await GetDoctorAppointmentsOnDate(id, date);
       dispatch(ShowLoader(false));
       if (response.success) {
-        console.log(response.data);
         setBookedSlots(response.data);
       } else {
         message.error(response.message);
@@ -125,6 +135,7 @@ function BookAppointment() {
       message.error(error.message);
     }
   };
+
   useEffect(() => {
     getData();
   }, [id]);
@@ -134,10 +145,11 @@ function BookAppointment() {
       getBookedSlots();
     }
   }, [date]);
+
   return (
     doctor && (
       <div className="bg-white p-2">
-        <h1 className="uppercase  my-1">
+        <h1 className="uppercase my-1">
           <b>
             {doctor?.firstName} {doctor?.lastName}
           </b>
@@ -145,71 +157,68 @@ function BookAppointment() {
 
         <hr />
 
-        <div className="flex flex-col gap-1 my-1 w-half">
+        <div className="flex flex-col gap-1 my-1 w-full">
           <div className="flex justify-between w-full">
             <h4>
-              <b>Speciality : </b>
+              <b>Speciality: </b>
             </h4>
             <h4>{doctor.speciality}</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Experience : </b>
+              <b>Experience: </b>
             </h4>
-            <h4>
-              {doctor.experience}
-              Years
-            </h4>
+            <h4>{doctor.experience} Years</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Email : </b>
+              <b>Email: </b>
             </h4>
             <h4>{doctor.email}</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Phone : </b>
+              <b>Phone: </b>
             </h4>
             <h4>{doctor.phone}</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Address : </b>
+              <b>Address: </b>
             </h4>
             <h4>{doctor.address}</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Fee : </b>
+              <b>Fee: </b>
             </h4>
             <h4>{doctor.fee}/- Per Session</h4>
           </div>
           <div className="flex justify-between w-full">
             <h4>
-              <b>Days Available : </b>
+              <b>Days Available: </b>
             </h4>
-            <h4>{doctor.days.join(",")}</h4>
+            <h4>{doctor.days.join(", ")}</h4>
           </div>
         </div>
 
         <hr />
 
-        {/* slots here */}
         <div className="flex flex-col gap-1 my-2">
-          <div className="flex gap-2 w-400 items-end">
+          <div className="flex gap-2 items-end">
             <div>
-              <span>Select Date :</span>
+              <span>Select Date: </span>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 min={moment().format("YYYY-MM-DD")}
+                className="p-1 border rounded"
               />
             </div>
           </div>
 
-          <div className="flex gap-2">{date && getSlotsData()}</div>
+          <div className="mt-2">{date && getSlotsData()}</div>
 
           {selectedSlot && (
             <div>
@@ -217,7 +226,8 @@ function BookAppointment() {
                 placeholder="Enter your problem here"
                 value={problem}
                 onChange={(e) => setProblem(e.target.value)}
-                rows="10"
+                rows="5"
+                className="w-full p-2 border rounded mt-2"
               ></textarea>
               <div className="flex gap-2 justify-center my-3">
                 <button
