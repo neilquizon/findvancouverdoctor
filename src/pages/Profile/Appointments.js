@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ShowLoader } from '../../redux/loaderSlice';
-import { Table, message } from 'antd';
-import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus } from '../../apicalls/appointments';
+import { Table, message, Modal, DatePicker } from 'antd';
+import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment, UpdateAppointmentDate } from '../../apicalls/appointments';
 import './Appointments.css'; // Ensure you create this CSS file
 
 function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [selectedAppointment, setSelectedAppointment] = React.useState(null);
+  const [newDate, setNewDate] = React.useState(null);
   const dispatch = useDispatch();
 
   const getData = async () => {
@@ -48,9 +51,61 @@ function Appointments() {
     }
   };
 
+  const onDelete = async (id) => {
+    try {
+      dispatch(ShowLoader(true));
+      const response = await DeleteAppointment(id);
+      dispatch(ShowLoader(false));
+      if (response.success) {
+        message.success(response.message);
+        getData();
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      dispatch(ShowLoader(false));
+      message.error(error.message);
+    }
+  };
+
+  const onUpdateDate = async () => {
+    if (!newDate) {
+      message.error("Please select a new date");
+      return;
+    }
+    try {
+      dispatch(ShowLoader(true));
+      const response = await UpdateAppointmentDate(selectedAppointment.id, newDate);
+      dispatch(ShowLoader(false));
+      if (response.success) {
+        message.success(response.message);
+        getData();
+        setIsModalVisible(false);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      dispatch(ShowLoader(false));
+      message.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getData();
   }, []);
+
+  const showConfirm = (id, isDoctor) => {
+    Modal.confirm({
+      title: 'Are you sure you want to cancel this appointment?',
+      onOk() {
+        if (isDoctor) {
+          onUpdate(id, "cancelled");
+        } else {
+          onDelete(id);
+        }
+      }
+    });
+  };
 
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date' },
@@ -66,24 +121,55 @@ function Appointments() {
       key: 'action',
       render: (text, record) => {
         const user = JSON.parse(localStorage.getItem("user"));
-        if (record.status === "pending" && user.role === "doctor") {
+        if (user.role === "doctor" && record.status === "pending") {
           return (
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <span
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => onUpdate(record.id, "cancelled")}
-              >
-                Cancel
-              </span>
               <span
                 style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 onClick={() => onUpdate(record.id, "approved")}
               >
                 Approve
               </span>
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => showConfirm(record.id, true)}
+              >
+                Cancel
+              </span>
             </div>
           );
         }
+        return null;
+      }
+    },
+    {
+      title: 'Modify',
+      dataIndex: 'modify',
+      key: 'modify',
+      render: (text, record) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user.role === "user") {
+          return (
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => showConfirm(record.id, false)}
+              >
+                Cancel
+              </span>
+              <span
+                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => {
+                  setSelectedAppointment(record);
+                  setIsModalVisible(true);
+                }}
+              >
+                Reschedule
+              </span>
+            </div>
+          );
+        }
+        return null;
       }
     }
   ];
@@ -97,6 +183,18 @@ function Appointments() {
         rowKey="id"
         scroll={{ x: 600 }} // Enable horizontal scrolling on smaller screens
       />
+
+      <Modal
+        title="Reschedule Appointment"
+        visible={isModalVisible}
+        onOk={onUpdateDate}
+        onCancel={() => setIsModalVisible(false)}
+      >
+        <DatePicker
+          format="YYYY-MM-DD"
+          onChange={(date, dateString) => setNewDate(dateString)}
+        />
+      </Modal>
     </div>
   );
 }

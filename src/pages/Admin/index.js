@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { message, Tabs } from "antd";
 import UsersList from "./UsersList";
 import DoctorsList from "./DoctorsList";
+import AppointmentsList from "./AppointmentsList"; // Import the new component
 import { useDispatch } from "react-redux";
 import { ShowLoader } from "../../redux/loaderSlice";
 import { GetUserById } from "../../apicalls/users";
@@ -30,17 +31,23 @@ function Admin() {
   useEffect(() => {
     checkIsAdmin();
   }, []);
+
   return (
-    isAdmin && <div className="bg-white p-1">
-      <Tabs>
-        <Tabs.TabPane tab="Users" key="1">
-          <UsersList />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Doctors" key="2">
-          <DoctorsList />
-        </Tabs.TabPane>
-      </Tabs>
-    </div>
+    isAdmin && (
+      <div className="bg-white p-1">
+        <Tabs>
+          <Tabs.TabPane tab="Users" key="1">
+            <UsersList />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Doctors" key="2">
+            <DoctorsList />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Appointments" key="3">
+            <AppointmentsList />
+          </Tabs.TabPane>
+        </Tabs>
+      </div>
+    )
   );
 }
 
