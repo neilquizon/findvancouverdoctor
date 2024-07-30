@@ -24,6 +24,11 @@ function Register() {
     const dispatch = useDispatch();
     
     const onFinish = async (values) => {
+        if (values.password !== values.confirmPassword) {
+            message.error("Passwords do not match");
+            return;
+        }
+
         try {
             dispatch(ShowLoader(true));
             const response = await CreateUser({
@@ -57,19 +62,34 @@ function Register() {
                         <strong>Register</strong>
                     </h2>
                     <hr />
-                    <Form.Item label="Name" name="name">
+                    <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
                         <input type="text" />
                     </Form.Item>
-                    <Form.Item label="Email" name="email">
+                    <Form.Item label="Date of Birth" name="dob" rules={[{ required: true, message: 'Please input your date of birth!' }]}>
+                        <input type="date" />
+                    </Form.Item>
+                    <Form.Item label="Provincial Health Number" name="provincialHealthNumber" rules={[{ required: true, message: 'Please input your Provincial Health Number!' }]}>
+                        <input type="text" />
+                    </Form.Item>
+                    <Form.Item label="Address" name="address" rules={[{ required: true, message: 'Please input your address!' }]}>
+                        <input type="text" />
+                    </Form.Item>
+                    <Form.Item label="Telephone Number" name="telephoneNumber" rules={[{ required: true, message: 'Please input your Telephone Number!' }]}>
+                        <input type="text" />
+                    </Form.Item>
+                    <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}>
                         <input type="email" />
                     </Form.Item>
-                    <Form.Item label="Password" name="password">
+                    <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
                         <input type="password" />
                     </Form.Item>
-                    <Form.Item label="Secret Question" name="secretQuestion">
+                    <Form.Item label="Confirm Password" name="confirmPassword" rules={[{ required: true, message: 'Please confirm your password!' }]}>
+                        <input type="password" />
+                    </Form.Item>
+                    <Form.Item label="Secret Question" name="secretQuestion" rules={[{ required: true, message: 'Please input your secret question!' }]}>
                         <input type="text" placeholder="Enter your secret question" />
                     </Form.Item>
-                    <Form.Item label="Secret Answer" name="secretAnswer">
+                    <Form.Item label="Secret Answer" name="secretAnswer" rules={[{ required: true, message: 'Please input your secret answer!' }]}>
                         <input type="text" placeholder="Enter your secret answer" />
                     </Form.Item>
 

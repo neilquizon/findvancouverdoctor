@@ -120,6 +120,15 @@ const DoctorForm = () => {
               </Col>
               <Col span={24} md={8}>
                 <Form.Item
+                  label="Medical Services Plan (MSP)"
+                  name="msp"
+                  rules={[{ required: true, message: "Required" }]}
+                >
+                  <input type="number" />
+                </Form.Item>
+              </Col>
+              <Col span={24} md={8}>
+                <Form.Item
                   label="Phone"
                   name="phone"
                   rules={[{ required: true, message: "Required" }]}
