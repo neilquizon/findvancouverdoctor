@@ -1,15 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Table, message, Modal, DatePicker } from "antd";
-import moment from "moment";
+import { Table, message, Modal } from "antd";
 import { ShowLoader } from "../../redux/loaderSlice";
-import { GetAppointments, DeleteAppointment, UpdateAppointmentDate } from "../../apicalls/appointments";
+import { GetAppointments, DeleteAppointment } from "../../apicalls/appointments";
 
 function AppointmentsList() {
   const [appointments, setAppointments] = React.useState([]);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [selectedAppointment, setSelectedAppointment] = React.useState(null);
-  const [newDate, setNewDate] = React.useState(null);
   const dispatch = useDispatch();
 
   const getData = async () => {
@@ -52,28 +48,6 @@ function AppointmentsList() {
     }
   };
 
-  const onUpdateDate = async () => {
-    if (!newDate) {
-      message.error("Please select a new date");
-      return;
-    }
-    try {
-      dispatch(ShowLoader(true));
-      const response = await UpdateAppointmentDate(selectedAppointment.id, newDate);
-      dispatch(ShowLoader(false));
-      if (response.success) {
-        message.success(response.message);
-        getData();
-        setIsModalVisible(false);
-      } else {
-        throw new Error(response.message);
-      }
-    } catch (error) {
-      dispatch(ShowLoader(false));
-      message.error(error.message);
-    }
-  };
-
   useEffect(() => {
     getData();
   }, []);
@@ -98,15 +72,6 @@ function AppointmentsList() {
           >
             Delete
           </span>
-          <span
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-            onClick={() => {
-              setSelectedAppointment(record);
-              setIsModalVisible(true);
-            }}
-          >
-            Reschedule
-          </span>
         </div>
       ),
     },
@@ -121,18 +86,6 @@ function AppointmentsList() {
         rowKey="id"
         scroll={{ x: 600 }} // Enable horizontal scrolling on smaller screens
       />
-
-      <Modal
-        title="Reschedule Appointment"
-        visible={isModalVisible}
-        onOk={onUpdateDate}
-        onCancel={() => setIsModalVisible(false)}
-      >
-        <DatePicker
-          format="YYYY-MM-DD"
-          onChange={(date, dateString) => setNewDate(dateString)}
-        />
-      </Modal>
     </div>
   );
 }

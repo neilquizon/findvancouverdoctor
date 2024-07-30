@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ShowLoader } from '../../redux/loaderSlice';
-import { Table, message, Modal, DatePicker } from 'antd';
-import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment, UpdateAppointmentDate } from '../../apicalls/appointments';
+import { Table, message, Modal } from 'antd';
+import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment } from '../../apicalls/appointments';
 import './Appointments.css'; // Ensure you create this CSS file
 
 function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [selectedAppointment, setSelectedAppointment] = React.useState(null);
-  const [newDate, setNewDate] = React.useState(null);
   const dispatch = useDispatch();
 
   const getData = async () => {
@@ -59,28 +56,6 @@ function Appointments() {
       if (response.success) {
         message.success(response.message);
         getData();
-      } else {
-        throw new Error(response.message);
-      }
-    } catch (error) {
-      dispatch(ShowLoader(false));
-      message.error(error.message);
-    }
-  };
-
-  const onUpdateDate = async () => {
-    if (!newDate) {
-      message.error("Please select a new date");
-      return;
-    }
-    try {
-      dispatch(ShowLoader(true));
-      const response = await UpdateAppointmentDate(selectedAppointment.id, newDate);
-      dispatch(ShowLoader(false));
-      if (response.success) {
-        message.success(response.message);
-        getData();
-        setIsModalVisible(false);
       } else {
         throw new Error(response.message);
       }
@@ -155,16 +130,7 @@ function Appointments() {
                 style={{ textDecoration: 'underline', cursor: 'pointer' }}
                 onClick={() => showConfirm(record.id, false)}
               >
-                Cancel
-              </span>
-              <span
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedAppointment(record);
-                  setIsModalVisible(true);
-                }}
-              >
-                Reschedule
+                (Cancel/Reschedule)
               </span>
             </div>
           );
@@ -183,18 +149,6 @@ function Appointments() {
         rowKey="id"
         scroll={{ x: 600 }} // Enable horizontal scrolling on smaller screens
       />
-
-      <Modal
-        title="Reschedule Appointment"
-        visible={isModalVisible}
-        onOk={onUpdateDate}
-        onCancel={() => setIsModalVisible(false)}
-      >
-        <DatePicker
-          format="YYYY-MM-DD"
-          onChange={(date, dateString) => setNewDate(dateString)}
-        />
-      </Modal>
     </div>
   );
 }
