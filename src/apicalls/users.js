@@ -28,7 +28,11 @@ export const CreateUser = async (payload) => {
       message: "User created successfully",
     };
   } catch (error) {
-    return error;
+    console.error("Error creating user:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 
@@ -59,7 +63,11 @@ export const LoginUser = async (payload) => {
       data: user,
     };
   } catch (error) {
-    return error;
+    console.error("Error logging in user:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 
@@ -76,9 +84,13 @@ export const GetAllUsers = async () => {
       }),
     };
   } catch (error) {
-    return error;
+    console.error("Error getting all users:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
-}
+};
 
 export const GetUserById = async (id) => {
   try {
@@ -91,9 +103,13 @@ export const GetUserById = async (id) => {
       },
     };
   } catch (error) {
-    return error;
+    console.error("Error getting user by id:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
-}
+};
 
 export const GetSecretQuestion = async (email) => {
   try {
@@ -112,7 +128,11 @@ export const GetSecretQuestion = async (email) => {
       secretQuestion: user.secretQuestion,
     };
   } catch (error) {
-    return error;
+    console.error("Error getting secret question:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 
@@ -133,7 +153,11 @@ export const ValidateSecretAnswer = async (payload) => {
       message: "Secret answer is correct",
     };
   } catch (error) {
-    return error;
+    console.error("Error validating secret answer:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 
@@ -164,6 +188,37 @@ export const UpdatePassword = async (payload) => {
       message: "Password updated successfully",
     };
   } catch (error) {
-    return error;
+    console.error("Error updating password:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const UpdateUserProfile = async (user) => {
+  try {
+    console.log("Updating user profile:", user); // Log the user data being passed
+    const userRef = doc(firestoreDatabase, "users", user.id);
+    await updateDoc(userRef, {
+      name: user.name,
+      dob: user.dob,
+      provincialHealthNumber: user.provincialHealthNumber,
+      address: user.address,
+      telephoneNumber: user.telephoneNumber,
+      email: user.email,
+      // Add any other fields that need to be updated
+    });
+
+    return {
+      success: true,
+      message: "Profile updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating profile:", error); // Log the error
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };

@@ -28,10 +28,7 @@ function Login() {
             dispatch(ShowLoader(false));
             if (response.success) {
                 message.success(response.message);
-                localStorage.setItem("user", JSON.stringify({
-                    ...response.data,
-                    password: ''
-                }));
+                localStorage.setItem("user", JSON.stringify(response.data));
                 navigate("/");
             } else {
                 throw new Error(response.message);
