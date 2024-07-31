@@ -190,6 +190,15 @@ const DoctorForm = () => {
                   <input type="number" />
                 </Form.Item>
               </Col>
+              <Col span={24} md={8}>
+                <Form.Item
+                  label="Language"
+                  name="language"
+                  rules={[{ required: true, message: "Required" }]}
+                >
+                  <input type="text" />
+                </Form.Item>
+              </Col>
               <Col span={24}>
                 <hr />
               </Col>
@@ -216,39 +225,29 @@ const DoctorForm = () => {
                   <input type="time" />
                 </Form.Item>
               </Col>
-              <Col span={24} md={8}>
-                <Form.Item
-                  label="Fee"
-                  name="fee"
-                  rules={[{ required: true, message: "Required" }]}
-                >
-                  <input type="number" />
-                </Form.Item>
-              </Col>
               <Col span={24}>
-  <Row gutter={[8, 8]}>
-    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day, index) => (
-      <Col span={12} key={index} className="flex items-center">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <input
-            type="checkbox"
-            checked={days.includes(day)}
-            value={day}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setDays([...days, e.target.value]);
-              } else {
-                setDays(days.filter((item) => item !== e.target.value));
-              }
-            }}
-          />
-          <label className="ml-1" style={{ marginLeft: '8px' }}>{day}</label>
-        </div>
-      </Col>
-    ))}
-  </Row>
-</Col>
-
+                <Row gutter={[8, 8]}>
+                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day, index) => (
+                    <Col span={12} key={index} className="flex items-center">
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type="checkbox"
+                          checked={days.includes(day)}
+                          value={day}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setDays([...days, e.target.value]);
+                            } else {
+                              setDays(days.filter((item) => item !== e.target.value));
+                            }
+                          }}
+                        />
+                        <label className="ml-1" style={{ marginLeft: '8px' }}>{day}</label>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              </Col>
             </Row>
             <div className="flex justify-end gap-2">
               <button className="outlined-btn" type="button">

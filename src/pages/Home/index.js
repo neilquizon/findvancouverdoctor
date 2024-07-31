@@ -43,14 +43,25 @@ function Home() {
     setSearchQuery(e.target.value.toLowerCase());
   };
 
-  const filteredDoctors = doctors.filter((doctor) =>
-    `${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(searchQuery)
-  );
+  const filteredDoctors = doctors.filter((doctor) => {
+    const fullName = `${doctor.firstName} ${doctor.lastName}`.toLowerCase();
+    const speciality = doctor.speciality?.toLowerCase() || '';
+    const language = doctor.language?.toLowerCase() || '';
+    const daysAvailable = doctor.days?.join(', ').toLowerCase() || '';
+    const availableTime = `${doctor.startTime} - ${doctor.endTime}`.toLowerCase();
+
+    return (
+      fullName.includes(searchQuery) ||
+      speciality.includes(searchQuery) ||
+      language.includes(searchQuery) ||
+      daysAvailable.includes(searchQuery) ||
+      availableTime.includes(searchQuery)
+    );
+  });
 
   return (
     user && (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '100vh' }}>
-        
         <div style={{ flexGrow: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
             <div>
@@ -97,6 +108,12 @@ function Home() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <h4>
+                      <b>Language : </b>
+                    </h4>
+                    <h4>{doctor.language}</h4>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <h4>
                       <b>Experience : </b>
                     </h4>
                     <h4>
@@ -114,6 +131,18 @@ function Home() {
                       <b>Phone : </b>
                     </h4>
                     <h4>{doctor.phone}</h4>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <h4>
+                      <b>Days Available : </b>
+                    </h4>
+                    <h4>{doctor.days.join(', ')}</h4>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <h4>
+                      <b>Available Time : </b>
+                    </h4>
+                    <h4>{doctor.startTime} - {doctor.endTime}</h4>
                   </div>
                 </div>
               </Col>
