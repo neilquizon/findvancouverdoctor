@@ -1,18 +1,21 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ShowLoader } from '../../redux/loaderSlice';
-import { Table, message, Modal } from 'antd';
+import { Table, message, Modal, Select } from 'antd';
 import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment } from '../../apicalls/appointments';
 import './Appointments.css'; // Ensure you create this CSS file
+import moment from 'moment';
+
+const { Option } = Select;
 
 function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
   const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const getData = async () => {
     try {
       dispatch(ShowLoader(true));
-      const user = JSON.parse(localStorage.getItem("user"));
       let response;
       if (user.role === "doctor") {
         response = await GetDoctorAppointments(user.id);
@@ -82,6 +85,10 @@ function Appointments() {
     });
   };
 
+  const handleChangeStatus = (id, value) => {
+    onUpdate(id, value);
+  };
+
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date' },
     { title: 'Time', dataIndex: 'slot', key: 'slot' },
@@ -90,55 +97,59 @@ function Appointments() {
     { title: 'Booked At', dataIndex: 'bookedOn', key: 'bookedOn' },
     { title: 'Problem', dataIndex: 'problem', key: 'problem' },
     { title: 'Status', dataIndex: 'status', key: 'status' },
-    {
+  ];
+
+  if (user.role === "doctor") {
+    columns.push({
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
       render: (text, record) => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user.role === "doctor" && record.status === "pending") {
-          return (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <span
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => onUpdate(record.id, "approved")}
-              >
-                Approve
-              </span>
-              <span
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => showConfirm(record.id, true)}
-              >
-                Cancel
-              </span>
-            </div>
-          );
-        }
-        return null;
+        const isPastDate = moment(record.date).isBefore(moment(), 'day');
+        return !isPastDate ? (
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <Select
+              value={record.status}
+              onChange={(value) => handleChangeStatus(record.id, value)}
+              style={{ width: 120 }}
+            >
+              <Option value="pending">Pending</Option>
+              <Option value="approved">Approved</Option>
+              <Option value="cancelled">Cancelled</Option>
+              <Option value="completed">Completed</Option>
+              <Option value="no show">No Show</Option>
+              <Option value="in progress">In Progress</Option>
+            </Select>
+            <span
+              style={{ textDecoration: 'underline', cursor: 'pointer' }}
+              onClick={() => showConfirm(record.id, true)}
+            >
+              Cancel
+            </span>
+          </div>
+        ) : null;
       }
-    },
-    {
+    });
+  } else {
+    columns.push({
       title: 'Modify',
       dataIndex: 'modify',
       key: 'modify',
       render: (text, record) => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user.role === "user") {
-          return (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <span
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => showConfirm(record.id, false)}
-              >
-                (Cancel/Reschedule)
-              </span>
-            </div>
-          );
-        }
-        return null;
+        const isPastDate = moment(record.date).isBefore(moment(), 'day');
+        return !isPastDate ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <span
+              style={{ textDecoration: 'underline', cursor: 'pointer' }}
+              onClick={() => showConfirm(record.id, false)}
+            >
+              Cancel/Reschedule
+            </span>
+          </div>
+        ) : null;
       }
-    }
-  ];
+    });
+  }
 
   return (
     <div className="table-container">
