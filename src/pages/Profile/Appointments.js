@@ -5,6 +5,7 @@ import { Table, message, Modal, Select } from 'antd';
 import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment } from '../../apicalls/appointments';
 import './Appointments.css'; // Ensure you create this CSS file
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -12,6 +13,7 @@ function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
 
   const getData = async () => {
     try {
@@ -51,14 +53,18 @@ function Appointments() {
     }
   };
 
-  const onDelete = async (id) => {
+  const onDelete = async (id, navigateToBookAppointment) => {
     try {
       dispatch(ShowLoader(true));
       const response = await DeleteAppointment(id);
       dispatch(ShowLoader(false));
       if (response.success) {
         message.success(response.message);
-        getData();
+        if (navigateToBookAppointment) {
+          navigate(`/book-appointment/${navigateToBookAppointment}`);
+        } else {
+          getData();
+        }
       } else {
         throw new Error(response.message);
       }
@@ -72,14 +78,18 @@ function Appointments() {
     getData();
   }, []);
 
-  const showConfirm = (id, isDoctor) => {
+  const showConfirm = (id, isDoctor, navigateToBookAppointment) => {
+    const title = navigateToBookAppointment 
+      ? 'Are you sure you want to reschedule this appointment? This will delete the current appointment and cannot be undone.'
+      : 'Are you sure you want to cancel this appointment?';
+
     Modal.confirm({
-      title: 'Are you sure you want to cancel this appointment?',
+      title: title,
       onOk() {
         if (isDoctor) {
           onUpdate(id, "cancelled");
         } else {
-          onDelete(id);
+          onDelete(id, navigateToBookAppointment);
         }
       }
     });
@@ -143,7 +153,13 @@ function Appointments() {
               style={{ textDecoration: 'underline', cursor: 'pointer' }}
               onClick={() => showConfirm(record.id, false)}
             >
-              Cancel/Reschedule
+              Cancel
+            </span>
+            <span
+              style={{ textDecoration: 'underline', cursor: 'pointer' }}
+              onClick={() => showConfirm(record.id, false, record.doctorId)}
+            >
+              Reschedule
             </span>
           </div>
         ) : null;

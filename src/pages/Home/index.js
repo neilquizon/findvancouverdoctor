@@ -72,7 +72,7 @@ function Home() {
                 onChange={handleSearch}
               />
             </div>
-            {user?.role !== "doctor" && (
+            {user?.role !== "doctor" && user?.role !== "admin" && (
               <button
                 style={{ border: '1px solid #004182', padding: '0.5rem 1rem', backgroundColor: 'transparent', cursor: 'pointer' }}
                 onClick={() => navigate("/apply-doctor")}
