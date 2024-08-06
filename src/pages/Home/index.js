@@ -65,6 +65,14 @@ function Home() {
         <div style={{ flexGrow: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
             <div>
+              {user && (
+                <button
+                  style={{ border: '1px solid #004182', padding: '0.5rem 1rem', backgroundColor: 'transparent', cursor: 'pointer', marginBottom: '1rem' }}
+                  onClick={() => navigate(user.role === "admin" ? "/admin" : "/profile")}
+                >
+                  My Dashboard
+                </button>
+              )}
               <input
                 placeholder="Search doctors"
                 style={{ width: '100%', maxWidth: '400px' }}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Form, Input, message } from "antd";
+import { Tabs, Form, Input, Button } from "antd";
 import Appointments from "./Appointments";
 import DoctorForm from "../DoctorForm";
 import moment from "moment";
-import { UpdateUserProfile } from "../../apicalls/users";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,22 +15,12 @@ function Profile() {
     form.setFieldsValue(storedUser);
   }, [form]);
 
-  const handleSave = async (values) => {
-    try {
-      const updatedUser = { ...user, ...values };
-      const response = await UpdateUserProfile(updatedUser);
-      if (response.success) {
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-        setUser(updatedUser);
-        setIsEditing(false);
-        message.success("Profile updated successfully");
-      } else {
-        message.error(response.message);
-      }
-    } catch (error) {
-      console.error("Error saving profile:", error); // Log the error
-      message.error("Failed to update profile");
-    }
+  const handleSave = (values) => {
+    // Update user information in local storage
+    const updatedUser = { ...user, ...values };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -40,19 +29,19 @@ function Profile() {
   };
 
   const buttonStyle = {
-    backgroundColor: "#0073b1",
-    color: "white",
-    border: "none",
-    padding: "10px 20px",
-    fontSize: "16px",
-    cursor: "pointer",
-    width: "100%",
-    textAlign: "center",
-    marginTop: "10px",
+    backgroundColor: '#0073b1',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    width: '100%',
+    textAlign: 'center',
+    marginTop: '10px',
   };
 
   const buttonHoverStyle = {
-    backgroundColor: "#005f8d",
+    backgroundColor: '#005f8d'
   };
 
   return (
@@ -73,64 +62,40 @@ function Profile() {
                   initialValues={user}
                   onFinish={handleSave}
                 >
-                  <Form.Item
-                    label="Name"
-                    name="name"
-                    rules={[{ required: true, message: "Please input your name!" }]}
-                  >
+                  <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
                     <Input />
                   </Form.Item>
-                  <Form.Item
-                    label="Date of Birth"
-                    name="dob"
-                    rules={[{ required: true, message: "Please input your date of birth!" }]}
-                  >
+                  <Form.Item label="Date of Birth" name="dob" rules={[{ required: true, message: 'Please input your date of birth!' }]}>
                     <Input type="date" />
                   </Form.Item>
-                  <Form.Item
-                    label="Provincial Health Number"
-                    name="provincialHealthNumber"
-                    rules={[{ required: true, message: "Please input your Provincial Health Number!" }]}
-                  >
+                  <Form.Item label="Provincial Health Number" name="provincialHealthNumber" rules={[{ required: true, message: 'Please input your Provincial Health Number!' }]}>
                     <Input />
                   </Form.Item>
-                  <Form.Item
-                    label="Address"
-                    name="address"
-                    rules={[{ required: true, message: "Please input your address!" }]}
-                  >
+                  <Form.Item label="Address" name="address" rules={[{ required: true, message: 'Please input your address!' }]}>
                     <Input />
                   </Form.Item>
-                  <Form.Item
-                    label="Telephone Number"
-                    name="telephoneNumber"
-                    rules={[{ required: true, message: "Please input your Telephone Number!" }]}
-                  >
+                  <Form.Item label="Telephone Number" name="telephoneNumber" rules={[{ required: true, message: 'Please input your Telephone Number!' }]}>
                     <Input />
                   </Form.Item>
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true, message: "Please input your email!", type: "email" }]}
-                  >
+                  <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}>
                     <Input />
                   </Form.Item>
 
                   <div className="flex gap-2">
-                    <button
-                      className="contained-btn my-1 w-full"
-                      type="submit"
-                      style={buttonStyle}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor}
+                    <button 
+                      className="contained-btn my-1 w-full" 
+                      type="submit" 
+                      style={buttonStyle} 
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor} 
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor}
                     >
                       Save
                     </button>
-                    <button
-                      className="contained-btn my-1 w-full"
-                      onClick={handleCancel}
-                      style={buttonStyle}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor}
+                    <button 
+                      className="contained-btn my-1 w-full" 
+                      onClick={handleCancel} 
+                      style={buttonStyle} 
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor} 
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor}
                     >
                       Cancel
@@ -171,14 +136,16 @@ function Profile() {
                   </div>
                   <div className="flex gap-2">
                     <h4>
-                      <b>Created On : {moment(user?.createdAt).format("DD-MM-YYYY hh:mm A")}</b>
+                      <b>
+                        Created On : {moment(user?.createdAt).format("DD-MM-YYYY hh:mm A")}
+                      </b>
                     </h4>
                   </div>
-                  <button
-                    className="contained-btn my-1 w-full"
-                    onClick={() => setIsEditing(true)}
-                    style={buttonStyle}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor}
+                  <button 
+                    className="contained-btn my-1 w-full" 
+                    onClick={() => setIsEditing(true)} 
+                    style={buttonStyle} 
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor} 
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor}
                   >
                     Edit
