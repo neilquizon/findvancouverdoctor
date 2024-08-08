@@ -188,12 +188,7 @@ function BookAppointment() {
             </h4>
             <h4>{doctor.address}</h4>
           </div>
-          <div className="flex justify-between w-full">
-            <h4>
-              <b>Fee: </b>
-            </h4>
-            <h4>{doctor.fee}/- Per Session</h4>
-          </div>
+          
           <div className="flex justify-between w-full">
             <h4>
               <b>Days Available: </b>
