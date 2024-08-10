@@ -24,7 +24,9 @@ function Home() {
       dispatch(ShowLoader(true));
       const response = await GetAllDoctors();
       if (response.success) {
-        setDoctors(response.data);
+        // Filter doctors to only include those with approved status
+        const approvedDoctors = response.data.filter(doctor => doctor.status === 'approved');
+        setDoctors(approvedDoctors);
       } else {
         message.error(response.message);
       }
