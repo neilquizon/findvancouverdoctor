@@ -54,11 +54,12 @@ function UsersList() {
   }, []);
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Phone Number', dataIndex: 'telephoneNumber', key: 'telephoneNumber' }, // Added phone number column
+    { title: 'Provincial Health Number', dataIndex: 'provincialHealthNumber', key: 'provincialHealthNumber' }, // Added provincial health number column
     { title: 'Role', dataIndex: 'role', key: 'role' },
-    { title: 'Status', dataIndex: 'status', key: 'status' },
+    
     {
       title: 'Action',
       key: 'action',

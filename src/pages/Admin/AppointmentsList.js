@@ -82,7 +82,7 @@ function AppointmentsList() {
     { title: "Time", dataIndex: "slot", key: "slot" },
     { title: "Doctor", dataIndex: "doctorName", key: "doctorName" },
     { title: "Patient", dataIndex: "userName", key: "userName" },
-    { title: "Booked At", dataIndex: "bookedOn", key: "bookedOn" },
+    { title: "Booked On", dataIndex: "bookedOn", key: "bookedOn" },
     { title: "Problem", dataIndex: "problem", key: "problem" },
     { title: "Status", dataIndex: "status", key: "status" },
   ];
