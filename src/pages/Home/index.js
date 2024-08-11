@@ -25,7 +25,13 @@ function Home() {
       const response = await GetAllDoctors();
       if (response.success) {
         // Filter doctors to only include those with approved status
-        const approvedDoctors = response.data.filter(doctor => doctor.status === 'approved');
+        const approvedDoctors = response.data
+          .filter(doctor => doctor.status === 'approved')
+          .sort((a, b) => {
+            const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+            const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
         setDoctors(approvedDoctors);
       } else {
         message.error(response.message);

@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ShowLoader } from '../../redux/loaderSlice';
-import { Table, message, Modal, Select } from 'antd';
-import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment } from '../../apicalls/appointments';
+import { Table, message, Modal, Select, Input } from 'antd';
+import { GetDoctorAppointments, GetUserAppointments, UpdateAppointmentStatus, DeleteAppointment, SaveDoctorNotes } from '../../apicalls/appointments';
 import './Appointments.css'; // Ensure you create this CSS file
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 function Appointments() {
   const [appointments, setAppointments] = React.useState([]);
+  const [notes, setNotes] = React.useState({});
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -74,6 +76,30 @@ function Appointments() {
     }
   };
 
+  const handleNotesChange = (appointmentId, value) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [appointmentId]: value,
+    }));
+  };
+
+  const saveNotes = async (appointmentId) => {
+    try {
+      dispatch(ShowLoader(true));
+      const response = await SaveDoctorNotes(appointmentId, notes[appointmentId]);
+      dispatch(ShowLoader(false));
+      if (response.success) {
+        message.success('Notes saved successfully');
+        getData();
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      dispatch(ShowLoader(false));
+      message.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -104,9 +130,30 @@ function Appointments() {
     { title: 'Time', dataIndex: 'slot', key: 'slot' },
     { title: 'Doctor', dataIndex: 'doctorName', key: 'doctorName' },
     { title: 'Patient', dataIndex: 'userName', key: 'userName' },
-    { title: 'Booked On', dataIndex: 'bookedOn', key: 'bookedOn' },
+    { title: 'Booked At', dataIndex: 'bookedOn', key: 'bookedOn' },
     { title: 'Problem', dataIndex: 'problem', key: 'problem' },
     { title: 'Status', dataIndex: 'status', key: 'status' },
+    {
+      title: 'Doctor\'s Notes',
+      dataIndex: 'notes',
+      key: 'notes',
+      render: (text, record) => {
+        if (user.role === "doctor") {
+          return (
+            <div>
+              <TextArea
+                rows={4}
+                value={notes[record.id] || record.notes}
+                onChange={(e) => handleNotesChange(record.id, e.target.value)}
+              />
+              <button onClick={() => saveNotes(record.id)}>Save</button>
+            </div>
+          );
+        } else {
+          return <div>{record.notes || "No notes available"}</div>;
+        }
+      }
+    }
   ];
 
   if (user.role === "doctor") {

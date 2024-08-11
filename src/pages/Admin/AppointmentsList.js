@@ -1,14 +1,16 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Table, message, Modal, Select } from "antd";
+import { Table, message, Modal, Select, Input } from "antd";
 import { ShowLoader } from "../../redux/loaderSlice";
-import { GetAppointments, DeleteAppointment, UpdateAppointmentStatus } from "../../apicalls/appointments";
+import { GetAppointments, DeleteAppointment, UpdateAppointmentStatus, SaveDoctorNotes } from "../../apicalls/appointments";
 import moment from 'moment';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 function AppointmentsList() {
   const [appointments, setAppointments] = React.useState([]);
+  const [notes, setNotes] = React.useState({});
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -69,6 +71,30 @@ function AppointmentsList() {
     }
   };
 
+  const handleNotesChange = (appointmentId, value) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [appointmentId]: value,
+    }));
+  };
+
+  const saveNotes = async (appointmentId) => {
+    try {
+      dispatch(ShowLoader(true));
+      const response = await SaveDoctorNotes(appointmentId, notes[appointmentId]);
+      dispatch(ShowLoader(false));
+      if (response.success) {
+        message.success('Notes saved successfully');
+        getData();
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      dispatch(ShowLoader(false));
+      message.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -85,6 +111,27 @@ function AppointmentsList() {
     { title: "Booked On", dataIndex: "bookedOn", key: "bookedOn" },
     { title: "Problem", dataIndex: "problem", key: "problem" },
     { title: "Status", dataIndex: "status", key: "status" },
+    {
+      title: "Doctor's Notes",
+      dataIndex: "notes",
+      key: "notes",
+      render: (text, record) => {
+        if (user.role === "doctor" || user.role === "admin") {
+          return (
+            <div>
+              <TextArea
+                rows={4}
+                value={notes[record.id] || record.notes}
+                onChange={(e) => handleNotesChange(record.id, e.target.value)}
+              />
+              <button onClick={() => saveNotes(record.id)}>Save</button>
+            </div>
+          );
+        } else {
+          return <div>{record.notes || "No notes available"}</div>;
+        }
+      },
+    },
   ];
 
   if (user.role === "doctor" || user.role === "admin") {
@@ -119,7 +166,7 @@ function AppointmentsList() {
           );
         }
         return null;
-      }
+      },
     });
   }
 
